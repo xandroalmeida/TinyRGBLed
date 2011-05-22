@@ -143,11 +143,11 @@ PROGMEM uint8_t _midiT0Tab1MHZ[128][2] = {
 };
 
 #ifndef __UNDER_TEST__
-#define midi_prescaler_value(x)   pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][0])
-#define midi_div_value(x)   pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][1])
+#define midi_prescaler_value(x) pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][0])
+#define midi_div_value(x)       pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][1])
 
-#define set_prescaler(x)    GTCCR |= 1; TCCR0B &= 0xf8;TCCR0B |= ((x)&0x7);
-#define play(x) set_prescaler(midi_prescaler_value((x)));OCR0A=midi_div_value((x));
+#define set_prescaler(x)        TCCR0B &= 0xf8;TCCR0B |= ((x)&0x7);GTCCR |= 1;
+#define play(x)                 set_prescaler(midi_prescaler_value((x)));TCNT0=0;OCR0A=midi_div_value((x));
 #endif
 
 #endif /* MIDI_H_INCLUDED */
