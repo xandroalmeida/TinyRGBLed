@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1306069452 source:c:\users\alexandro\projetos\tinyrgbled\main.c
+1306069741 source:c:\users\alexandro\projetos\tinyrgbled\main.c
 	"version.h"
 	<avr/io.h>
 	<avr/wdt.h>
@@ -10,6 +10,6 @@
 
 1305167718 c:\users\alexandro\projetos\tinyrgbled\version.h
 
-1306069481 c:\users\alexandro\projetos\tinyrgbled\midi.h
+1306069898 c:\users\alexandro\projetos\tinyrgbled\midi.h
 	<avr/pgmspace.h>
 
