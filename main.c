@@ -7,14 +7,14 @@ avrdude -c usbtiny -patn85 -U flash:w:main.hex
 #include <avr/wdt.h>
 #include <avr/eeprom.h>
 #include <avr/interrupt.h>  /* for sei() */
-#include <util/delay.h>     /* for _delay_ms() */
 #include <avr/pgmspace.h>
+#include "midi.h"
+
 
 #define R_BIT            1
 #define G_BIT            3
 #define B_BIT            4
 #define BZ_BIT           0
-
 
 static volatile uint8_t r = 0;
 static volatile uint8_t g = 0;
@@ -27,12 +27,13 @@ static volatile uint8_t b = 0;
           --<G|--|3 PB4         PB1 6|--|B>--
                  |4 GND         PB0 5|--|-|--
                  +-------------------+
-
+                       ATTiny85
 */
-uint8_t pwmTab[10] =
-{0, 3, 20, 30, 40, 50, 60, 70, 100, 150};
 
-uint8_t ledprog[10][3] =
+PROGMEM uint8_t _pwmTab[10] = {0, 3, 20, 30, 40, 50, 60, 70, 100, 150};
+#define pwmTab(x) pgm_read_byte_near(_pwmTab+(x))
+
+const uint8_t ledprog[10][3] =
 {
     {0,9,5},
     {3,0,0},
@@ -45,6 +46,15 @@ uint8_t ledprog[10][3] =
     {9,9,0},
     {0,0,5}
 };
+
+/*
+
+static double midi3Freq(uint8_t nota)
+{
+    static double passo = 1.059463094359300;
+    return 8.1758 + (nota * passo);
+}
+*/
 
 void update_leds()
 {
@@ -91,6 +101,7 @@ void update_leds()
 int main(void)
 {
     uint8_t i;
+    uint8_t nota = 0;
     uint16_t t;
 
     wdt_enable(WDTO_1S);
@@ -99,25 +110,26 @@ int main(void)
     DDRB |= _BV(B_BIT);   /* make the LED bit an output */
     DDRB |= _BV(BZ_BIT);   /* make the Buzzer bit an output */
 
-    //TCCR0A = 0b01010000; /* Configure timer 0 for Fast PWM mode */
-    //TCCR0B = 0b00000011;    /* Start timer 1 - no prescaler */
-
-    //OCR0A = 10;     /* Initialize duty cycle */
-    //OCR0B = 10;     /* Initialize duty cycle */
-
+    TCCR0A = 0x42;
+    TCCR0B = 0x00;
 
     while(1)
     {
+        play(nota);
+
+        if (++nota==128) {
+            nota = 0;
+        }
+
         for (i = 0; i < 10; i++)
         {
-            r = pwmTab[ledprog[i][0]];
-            g = pwmTab[ledprog[i][1]];
-            b = pwmTab[ledprog[i][2]];
+            r = pwmTab(ledprog[i][0]);
+            g = pwmTab(ledprog[i][1]);
+            b = pwmTab(ledprog[i][2]);
 
-            for (t = 0; t < 5000; t++)
+            for (t = 0; t < 500; t++)
             {
                 update_leds();
-                //PORTB ^= (1 << BZ_BIT);
             }
             wdt_reset();
         }
