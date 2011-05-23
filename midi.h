@@ -1,153 +1,30 @@
 #ifndef MIDI_H_INCLUDED
 #define MIDI_H_INCLUDED
 
-#ifndef __UNDER_TEST__
-#include <avr/pgmspace.h>
-#endif
-
-#define DIV256  4
-#define DIV64   3
-#define DIV8    2
-#define DIV1    1
+void midi_init();
 
 
-PROGMEM uint8_t _midiT0Tab1MHZ[128][2] = {
-{DIV256,238},
-{DIV256,224},
-{DIV256,212},
-{DIV256,200},
-{DIV256,189},
-{DIV256,178},
-{DIV256,168},
-{DIV256,158},
-{DIV256,149},
-{DIV256,141},
-{DIV256,133},
-{DIV256,126},
-{DIV256,118},
-{DIV256,112},
-{DIV256,105},
-{DIV256,99},
-{DIV256,94},
-{DIV256,88},
-{DIV256,83},
-{DIV256,79},
-{DIV256,74},
-{DIV256,70},
-{DIV256,66},
-{DIV64,252},
-{DIV64,238},
-{DIV64,224},
-{DIV64,212},
-{DIV64,200},
-{DIV64,189},
-{DIV64,178},
-{DIV64,168},
-{DIV64,158},
-{DIV64,149},
-{DIV64,141},
-{DIV64,133},
-{DIV64,126},
-{DIV64,118},
-{DIV64,112},
-{DIV64,105},
-{DIV64,99},
-{DIV64,94},
-{DIV64,88},
-{DIV64,83},
-{DIV64,79},
-{DIV64,74},
-{DIV64,70},
-{DIV64,66},
-{DIV64,62},
-{DIV64,59},
-{DIV64,55},
-{DIV64,52},
-{DIV64,49},
-{DIV64,46},
-{DIV64,44},
-{DIV64,41},
-{DIV64,39},
-{DIV64,37},
-{DIV64,35},
-{DIV64,33},
-{DIV64,31},
-{DIV64,29},
-{DIV8,224},
-{DIV8,212},
-{DIV8,200},
-{DIV8,189},
-{DIV8,178},
-{DIV8,168},
-{DIV8,158},
-{DIV8,149},
-{DIV8,141},
-{DIV8,133},
-{DIV8,126},
-{DIV8,118},
-{DIV8,112},
-{DIV8,105},
-{DIV8,99},
-{DIV8,94},
-{DIV8,88},
-{DIV8,83},
-{DIV8,79},
-{DIV8,74},
-{DIV8,70},
-{DIV8,66},
-{DIV8,62},
-{DIV8,59},
-{DIV8,55},
-{DIV8,52},
-{DIV8,49},
-{DIV8,46},
-{DIV8,44},
-{DIV8,41},
-{DIV8,39},
-{DIV8,37},
-{DIV8,35},
-{DIV8,33},
-{DIV1,252},
-{DIV1,238},
-{DIV1,224},
-{DIV1,212},
-{DIV1,200},
-{DIV1,189},
-{DIV1,178},
-{DIV1,168},
-{DIV1,158},
-{DIV1,149},
-{DIV1,141},
-{DIV1,133},
-{DIV1,126},
-{DIV1,118},
-{DIV1,112},
-{DIV1,105},
-{DIV1,99},
-{DIV1,94},
-{DIV1,88},
-{DIV1,83},
-{DIV1,79},
-{DIV1,74},
-{DIV1,70},
-{DIV1,66},
-{DIV1,62},
-{DIV1,59},
-{DIV1,55},
-{DIV1,52},
-{DIV1,49},
-{DIV1,46},
-{DIV1,44},
-{DIV1,41},
-{DIV1,39}
-};
+#define C   {0,
+#define Cs  {1,
+#define D   {2,
+#define Ds  {3,
+#define E   {4,
+#define F   {5,
+#define Fs  {6,
+#define G   {7,
+#define Gs  {8,
+#define A   {9,
+#define As  {10,
+#define B   {11,
 
-#ifndef __UNDER_TEST__
-#define midi_prescaler_value(x) pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][0])
-#define midi_div_value(x)       pgm_read_byte_near(&_midiT0Tab1MHZ[(x)][1])
+#define D1  64}
+#define D2  32}
+#define D3  16}
+#define D4  8}
+#define D5  4}
+#define D6  2}
+#define D7  1}
 
-#define set_prescaler(x)        TCCR0B &= 0xf8;TCCR0B |= ((x)&0x7);GTCCR |= 1;
-#define play(x)                 set_prescaler(midi_prescaler_value((x)));TCNT0=0;OCR0A=midi_div_value((x));
-#endif
+#define partitura_t(y,x) PROGMEM uint8_t y[(x)][2]
 
 #endif /* MIDI_H_INCLUDED */

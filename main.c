@@ -4,7 +4,6 @@ avrdude -c usbtiny -patn85 -U flash:w:main.hex
 
 #include "version.h"
 #include <avr/io.h>
-#include <avr/wdt.h>
 #include <avr/eeprom.h>
 #include <avr/interrupt.h>  /* for sei() */
 #include <avr/pgmspace.h>
@@ -29,6 +28,7 @@ static volatile uint8_t b = 0;
                  +-------------------+
                        ATTiny85
 */
+partitura_t(alecrim,3) = {C D1, C D2};
 
 PROGMEM uint8_t _pwmTab[10] = {0, 3, 20, 30, 40, 50, 60, 70, 100, 150};
 #define pwmTab(x) pgm_read_byte_near(_pwmTab+(x))
@@ -46,15 +46,6 @@ const uint8_t ledprog[10][3] =
     {9,9,0},
     {0,0,5}
 };
-
-/*
-
-static double midi3Freq(uint8_t nota)
-{
-    static double passo = 1.059463094359300;
-    return 8.1758 + (nota * passo);
-}
-*/
 
 void update_leds()
 {
@@ -98,13 +89,15 @@ void update_leds()
     }
 }
 
+
 int main(void)
 {
     uint8_t i;
-    uint8_t nota = 0;
     uint16_t t;
 
-    wdt_enable(WDTO_1S);
+    midi_init();
+    sei();
+
     DDRB |= _BV(R_BIT);   /* make the LED bit an output */
     DDRB |= _BV(G_BIT);   /* make the LED bit an output */
     DDRB |= _BV(B_BIT);   /* make the LED bit an output */
@@ -115,26 +108,21 @@ int main(void)
 
     while(1)
     {
-        play(nota);
-
-        if (++nota==128) {
-            nota = 0;
-        }
-
         for (i = 0; i < 10; i++)
         {
             r = pwmTab(ledprog[i][0]);
             g = pwmTab(ledprog[i][1]);
             b = pwmTab(ledprog[i][2]);
 
-            for (t = 0; t < 500; t++)
+            for (t = 0; t < 5000; t++)
             {
                 update_leds();
             }
-            wdt_reset();
         }
     }
-    /* _delay_ms(1); */
 
     return 0;
 }
+
+
+
