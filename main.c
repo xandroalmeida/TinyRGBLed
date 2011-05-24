@@ -28,7 +28,10 @@ static volatile uint8_t b = 0;
                  +-------------------+
                        ATTiny85
 */
-partitura_t(alecrim,3) = {C D1, C D2};
+music_t(alecrim,18) = {
+    C(4)D5, C(4)D5, D(4)D4,C(4)D4, F(4)D4, E(4)D2,
+    C(4)D5, C(4)D5, D(4)D4,C(4)D4, F(4)D4, E(4)D2,
+    C(4)D5, C(4)D5,C(5)D5, A(4)D5, F(4)D5, E(5)D5};
 
 PROGMEM uint8_t _pwmTab[10] = {0, 3, 20, 30, 40, 50, 60, 70, 100, 150};
 #define pwmTab(x) pgm_read_byte_near(_pwmTab+(x))
@@ -106,6 +109,8 @@ int main(void)
     TCCR0A = 0x42;
     TCCR0B = 0x00;
 
+    music_play(alecrim,18);
+
     while(1)
     {
         for (i = 0; i < 10; i++)
@@ -123,6 +128,3 @@ int main(void)
 
     return 0;
 }
-
-
-

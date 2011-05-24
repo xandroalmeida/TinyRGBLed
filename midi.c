@@ -30,6 +30,9 @@
 #define DIV8    2
 #define DIV1    1
 
+/* For more details about how this table was calculed, see the excel in this project
+and this link about notes http://en.wikipedia.org/wiki/Note_(music) */
+
 PROGMEM static uint8_t _midiT0Tab1MHZ[128][2] = {
 {DIV256,238},{DIV256,224},{DIV256,212},{DIV256,200},{DIV256,189},{DIV256,178},{DIV256,168},
 {DIV256,158},{DIV256,149},{DIV256,141},{DIV256,133},{DIV256,126},{DIV256,118},{DIV256,112},
@@ -49,16 +52,59 @@ PROGMEM static uint8_t _midiT0Tab1MHZ[128][2] = {
 {DIV1,41},{DIV1,39}
 };
 
-static volatile uint8_t nota = 0;
-
 void midi_init(){
-    wdt_set(WDTO_15MS);
+    wdt_set(WDTO_30MS);
+}
+
+typedef enum
+{
+    Stoped,
+    Paused,
+    Playing
+
+} play_status_t;
+
+static volatile play_status_t    music_status = Paused;
+static volatile uint8_t          music_pass = 0;
+static volatile uint8_t          music_len = 0;
+static uint16_t                  music_playing;
+
+void _music_play(uint16_t musicTab, uint8_t len)
+{
+    music_pass = 0;
+    music_len = len;
+    music_playing = musicTab;
+    music_status = Playing;
+}
+
+void music_pause()
+{
+    music_status = Paused;
+}
+
+void music_stop()
+{
+    music_pass = 0;
+    music_status = Stoped;
 }
 
 ISR(WDT_vect)
 {
-    play(nota);
-    if (++nota==128) {
-        nota = 0;
+    static uint8_t duration = 0;
+
+    switch(music_status) {
+        case Stoped:
+        break;
+        case Paused:
+        break;
+        case Playing:
+            if (duration-- == 0) {
+                play(pgm_read_byte_near(music_playing + (music_pass * 2)));
+                duration = pgm_read_byte_near(music_playing + (music_pass * 2) + 1);
+                if (++music_pass == music_len) {
+                    music_pass = 0;
+                }
+            }
+        break;
     }
 }
