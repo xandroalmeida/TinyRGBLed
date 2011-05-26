@@ -18,14 +18,20 @@ void midi_init();
 #define A(t)   {9+((t)*12),
 #define As(t)  {10+((t)*12),
 #define B(t)   {11+((t)*12),
+#define P()    {255,
+#define PAUSE   255
 
-#define D1  64}
-#define D2  32}
-#define D3  16}
-#define D4  8}
-#define D5  4}
-#define D6  2}
-#define D7  1}
+
+#define D1   16}
+#define D1p  16+8}
+#define D2   8}
+#define D2p  8+4}
+#define D3   4}
+#define D3p  4+2}
+#define D4   2}
+#define D4p  2+1}
+#define D5   1}
+#define D5p  1+0}
 
 #define music_t(y,x) PROGMEM uint8_t y[(x)][2]
 

@@ -8,6 +8,7 @@
 
 #define set_prescaler(x)        TCCR0B &= 0xf8;TCCR0B |= ((x)&0x7);GTCCR |= 1;
 #define play(x)                 set_prescaler(midi_prescaler_value((x)));TCNT0=0;OCR0A=midi_div_value((x));
+#define play_pause()            TCCR0B &= 0xf8;GTCCR |= 1;TCNT0=0;
 
 #define wdt_set(value)   \
     __asm__ __volatile__ (  \
@@ -31,7 +32,10 @@
 #define DIV1    1
 
 /* For more details about how this table was calculed, see the excel in this project
-and this link about notes http://en.wikipedia.org/wiki/Note_(music) */
+and this link about notes
+    http://en.wikipedia.org/wiki/Note_(music)
+    http://pt.wikipedia.org/wiki/Dura%C3%A7%C3%A3o_(m%C3%BAsica)
+*/
 
 PROGMEM static uint8_t _midiT0Tab1MHZ[128][2] = {
 {DIV256,238},{DIV256,224},{DIV256,212},{DIV256,200},{DIV256,189},{DIV256,178},{DIV256,168},
@@ -91,6 +95,7 @@ void music_stop()
 ISR(WDT_vect)
 {
     static uint8_t duration = 0;
+    uint8_t note = 0;
 
     switch(music_status) {
         case Stoped:
@@ -99,7 +104,12 @@ ISR(WDT_vect)
         break;
         case Playing:
             if (duration-- == 0) {
-                play(pgm_read_byte_near(music_playing + (music_pass * 2)));
+                note = pgm_read_byte_near(music_playing + (music_pass * 2));
+                if (note !=PAUSE) {
+                    play(pgm_read_byte_near(music_playing + (music_pass * 2)));
+                } else {
+                    play_pause();
+                }
                 duration = pgm_read_byte_near(music_playing + (music_pass * 2) + 1);
                 if (++music_pass == music_len) {
                     music_pass = 0;
