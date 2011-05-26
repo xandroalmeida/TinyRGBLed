@@ -1,4 +1,12 @@
-A small project in C using one Atmel ATiny85 to play a buzzer and controler 3 leds
+A small project in C using one Atmel ATiny85 to play a buzzer and controler 3 leds.
+
+To compile this project you must have installed the WinAVR (http://winavr.sourceforge.net/)
+The Code::Block will help you too (http://www.codeblocks.org/)
+
+I have used the Pocket AVR Programmer (http://www.sparkfun.com/products/9825) to programmer the AVR.
+
+ 
+Bellow the "schematic" of the circuit.
 
                  +-------------------+
                  |1 RST         VCC 8|
